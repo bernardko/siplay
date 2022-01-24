@@ -1,0 +1,58 @@
+---
+- name: Install system packages
+  become: yes
+  apt: >
+    pkg=rabbitmq-server
+    state=present
+    update-cache=yes
+  tags:
+    - setup
+
+- name: Create vhost
+  when: rabbitmq is defined
+  become: yes
+  rabbitmq_vhost:
+    name: "{{ rabbitmq.vhost }}"
+    state: present
+  tags:
+    - setup
+
+- name: Create user and set permissions
+  when: rabbitmq is defined
+  become: yes
+  rabbitmq_user:
+    user: "{{ rabbitmq.user }}"
+    password: "{{ rabbitmq.password }}"
+    vhost: "{{ rabbitmq.vhost }}"
+    configure_priv: "{{ rabbitmq.configure_priv }}"
+    read_priv: "{{ rabbitmq.read_priv }}"
+    write_priv: "{{ rabbitmq.write_priv }}"
+    state: present
+  tags:
+    - setup
+
+# Clean up tasks that are never run unless DELETE tag is used.
+- name: DELETE User
+  when: rabbitmq is defined
+  become: yes
+  rabbitmq_user:
+    user: "{{ rabbitmq.user }}"
+    password: "{{ rabbitmq.password }}"
+    vhost: "{{ rabbitmq.vhost }}"
+    configure_priv: "{{ rabbitmq.configure_priv }}"
+    read_priv: "{{ rabbitmq.read_priv }}"
+    write_priv: "{{ rabbitmq.write_priv }}"
+    state: absent
+  tags:
+    - DELETE
+    - never
+
+- name: DELETE vhost
+  when: rabbitmq is defined
+  become: yes
+  rabbitmq_vhost:
+    name: "{{ rabbitmq.vhost }}"
+    state: absent
+  tags:
+    - DELETE
+    - never

@@ -1,0 +1,12 @@
+---
+- name: Application Configuration
+  hosts: 
+    - appservers
+    - taskservers
+  vars_files:
+    - ../{{ inventory_name }}/group_vars/{{ env }}.yml
+  become: yes
+  roles:
+    - role: django
+    - role: uvicorn
+    - role: celery

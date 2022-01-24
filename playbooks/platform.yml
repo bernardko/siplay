@@ -1,0 +1,9 @@
+---
+- name: Install platform dependancies
+  hosts: appservers
+  vars_files:
+    - ../{{ inventory_name }}/group_vars/{{ env }}.yml
+  become: yes
+  roles:
+    - role: avanov.pyenv
+    - role: supervisor

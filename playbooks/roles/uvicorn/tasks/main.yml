@@ -1,0 +1,77 @@
+---
+# Initial setup tasks
+- import_tasks: base.yml
+
+# Main workflow
+- name: Stop unicorn process
+  when: uvicorn is defined
+  become: yes
+  supervisorctl: >
+    name={{ project_name }}-{{ item.name }}-uvicorn:
+    state=stopped
+  with_items: "{{ uvicorn }}"
+  ignore_errors: yes
+  tags:
+    - stop
+    - remove
+    - restart
+    - never
+
+- name: Install uvicorn supervisor configuration.
+  when: uvicorn is defined
+  notify: restart uvicorn
+  become: yes
+  template: >
+    src=supervisor.uvicorn.conf.j2
+    dest=/etc/supervisor/conf.d/{{ project_name }}-{{ item.name }}-uvicorn.conf
+    owner={{ project_user }}
+    group=www-data
+    mode=0644
+  with_items: "{{ uvicorn }}"
+  tags:
+    - deploy
+
+- name: Start uvicorn process
+  when: uvicorn is defined
+  become: yes
+  supervisorctl: >
+    name={{ project_name }}-{{ item.name }}-uvicorn:
+    state=started
+  with_items: "{{ uvicorn }}"
+  tags:
+    - start
+    - restart
+    - never
+
+# Clean up tasks that are only run when remove tag is used.
+- name: Remove uvicorn supervisor configuration.
+  when: uvicorn is defined
+  become: yes
+  file: >
+    path=/etc/supervisor/conf.d/{{ project_name }}-{{ item.name }}-uvicorn.conf
+    state=absent
+  with_items: "{{ uvicorn }}"
+  tags:
+    - remove
+    - never
+
+- name: Remove uvicorn process
+  when: uvicorn is defined
+  become: yes
+  supervisorctl: >
+    name={{ project_name }}-{{ item.name }}-uvicorn:
+    state=absent
+  with_items: "{{ uvicorn }}"
+  ignore_errors: yes
+  tags:
+    - remove
+    - never
+
+- name: Update supervisor processes
+  when: uvicorn is defined
+  become: yes
+  shell: supervisorctl update
+  ignore_errors: yes
+  tags:
+    - remove
+    - never

@@ -1,0 +1,57 @@
+---
+- name: Stop celery workers
+  become: yes
+  supervisorctl: >
+    name={{project_name}}-{{ item.node_name }}
+    state=stopped
+  with_items: "{{ celery.workers }}"
+  ignore_errors: yes
+  tags:
+    - stop
+    - restart
+    - never
+    
+- name: Install Celery worker supervisor jobs
+  become: yes
+  template: >
+    src=supervisor.celeryworker.conf.j2
+    dest=/etc/supervisor/conf.d/{{ project_name }}-{{ item.node_name }}.conf
+    force=yes
+  vars:
+    worker: "{{ item }}"
+  with_items: "{{ celery.workers }}"
+  notify:
+    - restart celery workers
+  tags:
+    - deploy
+
+- name: Start celery workers
+  become: yes
+  supervisorctl: >
+    name={{project_name}}-{{ item.node_name }}
+    state=restarted
+  with_items: "{{ celery.workers }}"
+  tags:
+    - start
+    - restart
+    - never
+
+- name: celery | Remove celery supervisor configuration.
+  when: celery.workers is defined
+  become: yes
+  file: >
+    path=/etc/supervisor/conf.d/{{ project_name }}-{{ item.node_name }}.conf
+    state=absent
+  with_items: "{{ celery.workers }}"
+  tags:
+    - remove
+    - never
+
+- name: Update Supervisor
+  when: celery.workers is defined
+  become: yes
+  shell: supervisorctl update
+  ignore_errors: yes
+  tags:
+    - remove
+    - never

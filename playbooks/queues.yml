@@ -1,0 +1,8 @@
+---
+- name: Configure all queue servers
+  hosts: queueservers
+  vars_files:
+    - ../{{ inventory_name }}/group_vars/{{ env }}.yml
+  become: yes
+  roles:
+    - role: rabbitmq

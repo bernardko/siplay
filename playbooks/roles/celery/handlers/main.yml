@@ -1,0 +1,7 @@
+---
+- name: restart celery workers
+  become: yes
+  supervisorctl: >
+    name={{project_name}}-{{ item.node_name }}
+    state=restarted
+  with_items: "{{ celery.workers }}"

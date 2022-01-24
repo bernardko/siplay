@@ -1,0 +1,8 @@
+---
+- name: restart uvicorn
+  when: uvicorn is defined
+  become: yes
+  supervisorctl: >
+    name={{ project_name }}-{{ item.name }}-uvicorn:
+    state=restarted
+  with_items: "{{ uvicorn }}"

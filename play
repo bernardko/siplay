@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#     A convenience script to simplify calling ansible-playbook
+#
+#    ./play <inventory_name> <environment> <playbook> <tags>
+#
+#    test-inventory setup commands:
+#    ./play test-inventory local setup
+#    ./play test-inventory local deploy
+#
+#    test-inventory control commands:
+#    ./play test-inventory local processes start
+#    ./play test-inventory local processes stop
+#    ./play test-inventory local processes restart
+#
+#    test-inventory clean up commands (Becareful running these, DELETE actually deletes data):
+#    ./play test-inventory local processes remove
+#    ./play test-inventory local app DELETE
+#    ./play test-inventory local queues DELETE
+#    ./play test-inventory local dbs DELETE
+#    ./play test-inventory local loadbalancers DELETE
+
+INVENTORY=$1
+ENVIRONMENT=$2
+PLAYBOOK=${3:-"deploy"}
+TAGS=${4:-"all"}
+
+ansible-playbook -e @$INVENTORY/$ENVIRONMENT.vault --ask-vault-pass --inventory-file=$INVENTORY/$ENVIRONMENT "$(dirname $0)/playbooks/${PLAYBOOK}.yml" --extra-vars="files=$PWD/$INVENTORY/files inventory_name=$INVENTORY env=$ENVIRONMENT" --tags="$TAGS"

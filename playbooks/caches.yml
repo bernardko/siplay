@@ -1,0 +1,8 @@
+---
+- name: Configure all cache servers
+  hosts: cacheservers
+  vars_files:
+    - ../{{ inventory_name }}/group_vars/{{ env }}.yml
+  become: yes
+  roles:
+    - role: memcached
