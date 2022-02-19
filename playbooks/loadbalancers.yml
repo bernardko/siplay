@@ -1,8 +1,6 @@
 ---
 - name: Configure all Load Balancers
   hosts: loadbalancers
-  vars_files:
-    - ../{{ inventory_name }}/group_vars/{{ env }}.yml
   become: yes
   roles:
     - role: nginx

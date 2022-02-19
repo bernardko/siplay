@@ -3,8 +3,6 @@
   hosts: 
     - appservers
     - taskservers
-  vars_files:
-    - ../{{ inventory_name }}/group_vars/{{ env }}.yml
   become: yes
   roles:
     - role: django
