@@ -1,7 +1,7 @@
 This repository is DEPRECATED and replaced by the following 2 repositories which are refactored to allow for easier integration into any project by using Ansible collection format.
 
-- [coord](https://github.com/bernardko/coord.git) - Ansible collection for deploying Django projects.
-- [coord-starter](https://github.com/bernardko/coord-starter.git) - A starter project for using [coord](https://github.com/bernardko/coord.git) which features using vagrant for testing your playbooks.
+- [ansible-coord](https://github.com/bernardko/ansible-coord) - Ansible collection for deploying Django projects.
+- [ansible-coord-starter](https://github.com/bernardko/ansible-coord-starter) - A starter project for using [coord](https://github.com/bernardko/ansible-coord) which features using vagrant for testing your playbooks.
 
 Please use the new repositories.
 
