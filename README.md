@@ -1,3 +1,10 @@
+This repository is DEPRECATED and replaced by the following 2 repositories which are refactored to allow for easier integration into any project by using Ansible collection format.
+
+- [coord](https://github.com/bernardko/coord.git) - Ansible collection for deploying Django projects.
+- [coord-starter](https://github.com/bernardko/coord-starter.git) - A starter project for using [coord](https://github.com/bernardko/coord.git) which features using vagrant for testing your playbooks.
+
+Please use the new repositories.
+
 # siplay - A Starter Ansible Playbook for Django Deployment
 
 The purpose of this ansible playbook is to store the multi-environment configuration for multiple django projects utilizing the same playbooks for deployment.
